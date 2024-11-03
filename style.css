@@ -1,0 +1,59 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: yellow;
+}
+
+#mazeContainer {
+    display: grid;
+    grid-template-columns: repeat(10, 40px); /* adjust as needed */
+    gap: 8px;
+    margin: 20px;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid black;
+    background-color: white;
+}
+
+.start {
+    background-color: green !important;
+}
+
+.end {
+    background-color: red !important;
+}
+
+.path {
+    background-color: lightblue;
+}
+
+.closed {
+    background-color: gray;
+}
+
+.obstacle {
+    background-color: black;
+}
+.lilita-one-regular {
+    font-family: "Lilita One", sans-serif;
+    font-weight: 400;
+    font-size: 60px;
+    font-style: normal;
+}
+
+.quintessential-regular {
+    font-family: "Quintessential", serif;
+    font-weight: 400;
+    font-size: 20px;
+    font-style: normal;
+}
+
