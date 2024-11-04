@@ -24,7 +24,7 @@
             width: 20px;
             height: 20px;
             background-color: #ddd;
-            border: 2px solid #bbb;
+            border: 1px solid #bbb;
             box-sizing: border-box; /* Include border in width and height */
         }
         .start {
@@ -51,7 +51,6 @@
         var rows = 10, cols = 10;
         var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
         var maze = document.getElementById('maze');
-        var openList = [], closedList = [], cameFrom = {};
 
         // Generate maze grid
         function generateGrid() {
@@ -115,14 +114,13 @@
         function reconstructPath(current) {
             while (current) {
                 setCell(current.x, current.y, 'path');
-                current = cameFrom[`${current.x},${current.y}`];
+                current = current.parent;
             }
         }
 
         function aStar() {
-            openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode) }];
-            closedList = [];
-            cameFrom = {};
+            let openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode), parent: null }];
+            let closedList = [];
 
             while (openList.length > 0) {
                 // Sort open list to find the node with the lowest f score
@@ -148,9 +146,9 @@
                     const gScore = current.g + 1; // Cost from start to neighbor
                     const gScoreIsBest = !openList.find(node => node.x === neighbor.x && node.y === neighbor.y) || (gScore < neighbor.g);
                     if (gScoreIsBest) {
-                        cameFrom[`${neighbor.x},${neighbor.y}`] = current;
                         neighbor.g = gScore;
                         neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
+                        neighbor.parent = current; // Track the parent node
 
                         // Add neighbor to open list if not already present
                         if (!openList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
@@ -167,8 +165,6 @@
         }
 
         function resetMaze() {
-            openList = [];
-            closedList = [];
             document.querySelectorAll('.cell').forEach(cell => {
                 cell.classList.remove('path'); // Remove path class
             });
