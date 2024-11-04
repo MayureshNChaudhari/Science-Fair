@@ -93,79 +93,79 @@
             aStar(); // Start the A* algorithm
         }
 
-        function aStar() {
-            openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode), parent: null }];
-            closedList = [];
+        // function aStar() {
+        //     openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode), parent: null }];
+        //     closedList = [];
 
-            while (openList.length > 0) {
-                // Sort open list by f value and pick the node with the lowest f
-                openList.sort((a, b) => a.f - b.f);
-                const current = openList.shift(); // Get the node with the lowest f
+        //     while (openList.length > 0) {
+        //         // Sort open list by f value and pick the node with the lowest f
+        //         openList.sort((a, b) => a.f - b.f);
+        //         const current = openList.shift(); // Get the node with the lowest f
 
-                closedList.push(current); // Add current node to closed list
+        //         closedList.push(current); // Add current node to closed list
 
-                // If we reached the target, end
-                if (current.x === targetNode.x && current.y === targetNode.y) {
-                    drawPath(current);
-                    return;
-                }
+        //         // If we reached the target, end
+        //         if (current.x === targetNode.x && current.y === targetNode.y) {
+        //             drawPath(current);
+        //             return;
+        //         }
 
-                const neighbors = getNeighbors(current);
-                for (const neighbor of neighbors) {
-                    if (!closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
-                        // Check if it's already in openList
-                        const existingNode = openList.find(node => node.x === neighbor.x && node.y === neighbor.y);
-                        const newG = current.g + 1;
+        //         const neighbors = getNeighbors(current);
+        //         for (const neighbor of neighbors) {
+        //             if (!closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
+        //                 // Check if it's already in openList
+        //                 const existingNode = openList.find(node => node.x === neighbor.x && node.y === neighbor.y);
+        //                 const newG = current.g + 1;
 
-                        if (!existingNode || newG < neighbor.g) {
-                            neighbor.g = newG;
-                            neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
-                            neighbor.parent = current; // Set current as parent
-                            if (!existingNode) {
-                                openList.push(neighbor); // Add neighbor to open list if not present
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                 if (!existingNode || newG < neighbor.g) {
+        //                     neighbor.g = newG;
+        //                     neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
+        //                     neighbor.parent = current; // Set current as parent
+        //                     if (!existingNode) {
+        //                         openList.push(neighbor); // Add neighbor to open list if not present
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
-        function heuristic(node, target) {
-            return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
-        }
+        // function heuristic(node, target) {
+        //     return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
+        // }
 
-        function getNeighbors(node) {
-            const directions = [
-                { x: 0, y: -1 }, { x: 1, y: 0 },
-                { x: 0, y: 1 }, { x: -1, y: 0 }
-            ];
-            const neighbors = [];
+        // function getNeighbors(node) {
+        //     const directions = [
+        //         { x: 0, y: -1 }, { x: 1, y: 0 },
+        //         { x: 0, y: 1 }, { x: -1, y: 0 }
+        //     ];
+        //     const neighbors = [];
 
-            for (const dir of directions) {
-                const x = node.x + dir.x;
-                const y = node.y + dir.y;
-                const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-                if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
-                    neighbors.push({ x, y, g: Infinity, f: Infinity, parent: null });
-                }
-            }
-            return neighbors;
-        }
+        //     for (const dir of directions) {
+        //         const x = node.x + dir.x;
+        //         const y = node.y + dir.y;
+        //         const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+        //         if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
+        //             neighbors.push({ x, y, g: Infinity, f: Infinity, parent: null });
+        //         }
+        //     }
+        //     return neighbors;
+        // }
 
-        function drawPath(current) {
-            while (current) {
-                if (!(current.x === startNode.x && current.y === startNode.y) && !(current.x === targetNode.x && current.y === targetNode.y)) {
-                    setCell(current.x, current.y, 'path');
-                }
-                current = current.parent; // Move to the parent
-            }
-        }
+        // function drawPath(current) {
+        //     while (current) {
+        //         if (!(current.x === startNode.x && current.y === startNode.y) && !(current.x === targetNode.x && current.y === targetNode.y)) {
+        //             setCell(current.x, current.y, 'path');
+        //         }
+        //         current = current.parent; // Move to the parent
+        //     }
+        // }
 
-        function resetMaze() {
-            generateGrid(); // Regenerate grid
-            openList = [];
-            closedList = [];
-        }
+        // function resetMaze() {
+        //     generateGrid(); // Regenerate grid
+        //     openList = [];
+        //     closedList = [];
+        // }
 
         // Initialize maze
         generateGrid();
