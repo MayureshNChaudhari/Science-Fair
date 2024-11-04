@@ -17,12 +17,12 @@
         #maze {
             display: flex;
             flex-wrap: wrap; /* Allow cells to wrap onto new lines */
-            width: 204px; /* Set width to fit 10 cells of 10px with gaps */
+            width: 102px; /* Set width to fit 10 cells of 10px with gaps */
             margin-bottom: 20px; /* Space between maze and buttons */
         }
         .cell {
-            width: 20px;
-            height: 20px;
+            width: 10px;
+            height: 10px;
             background-color: #ddd;
             border: 1px solid #bbb;
             box-sizing: border-box; /* Include border in width and height */
@@ -52,9 +52,6 @@
         var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
         var maze = document.getElementById('maze');
 
-        
-        // Initialize maze
-        generateGrid();
         // Generate maze grid
         function generateGrid() {
             maze.innerHTML = ''; // Clear existing maze
@@ -92,31 +89,32 @@
         }
 
         function heuristic(node, target) {
-            // Use Manhattan distance as the heuristic
-            return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
+            return Math.abs(node.x - target.x) + Math.abs(node.y - target.y); // Manhattan distance
         }
 
-        // function getNeighbors(node) {
-        //     const directions = [
-        //         { x: 0, y: -1 }, { x: 1, y: 0 },
-        //         { x: 0, y: 1 }, { x: -1, y: 0 }
-        //     ];
-        //     const neighbors = [];
+        function getNeighbors(node) {
+            const directions = [
+                { x: 0, y: -1 }, // Up
+                { x: 1, y: 0 },  // Right
+                { x: 0, y: 1 },  // Down
+                { x: -1, y: 0 }  // Left
+            ];
+            const neighbors = [];
 
-        //     for (const dir of directions) {
-        //         const x = node.x + dir.x;
-        //         const y = node.y + dir.y;
-        //         const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-        //         if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
-        //             neighbors.push({ x, y });
-        //         }
-        //     }
-        //     return neighbors;
-        // }
+            for (const dir of directions) {
+                const x = node.x + dir.x;
+                const y = node.y + dir.y;
+                const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+                if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
+                    neighbors.push({ x, y });
+                }
+            }
+            return neighbors;
+        }
 
         function reconstructPath(current) {
             while (current) {
-                setCell(current.x, current.y, 'path');
+                setCell(current.x, current.y, 'path'); // Mark the path
                 current = current.parent;
             }
         }
@@ -141,9 +139,8 @@
                 // Get neighbors and calculate scores
                 const neighbors = getNeighbors(current);
                 for (const neighbor of neighbors) {
-                    // Ignore already evaluated neighbors
                     if (closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
-                        continue; 
+                        continue; // Ignore already evaluated neighbors
                     }
 
                     const gScore = current.g + 1; // Cost from start to neighbor
@@ -164,16 +161,19 @@
         }
 
         function startMaze() {
+            // Reset path before starting a new calculation
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('path'); // Remove path class
+            });
             aStar(); // Start the pathfinding process
         }
 
         function resetMaze() {
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.classList.remove('path'); // Remove path class
-            });
-            setCell(startNode.x, startNode.y, 'start');
-            setCell(targetNode.x, targetNode.y, 'target');
+            generateGrid(); // Regenerate grid and reset obstacles
         }
+
+        // Initialize maze
+        generateGrid();
     </script>
 </body>
 </html>
