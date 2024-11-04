@@ -94,72 +94,96 @@
         }
 
         function aStar() {
-            openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode), parent: null }];
-            closedList = [];
+    var openList = []; // List of nodes to be evaluated
+    var closedList = []; // List of nodes already evaluated
+    startNode.g = 0;
+    startNode.f = heuristic(startNode, targetNode);
+    openList.push(startNode); // Add the start node to the open list
 
-            while (openList.length > 0) {
-                // Sort open list by f value and pick the node with the lowest f
-                openList.sort((a, b) => a.f - b.f);
-                const current = openList.shift(); // Get the node with the lowest f
+    while (openList.length > 0) {
+        // Sort the open list and get the node with the lowest f value
+        openList.sort(function(a, b) {
+            return a.f - b.f; // Sort by f value
+        });
+        var current = openList.shift(); // Remove the first node in the sorted open list
 
-                closedList.push(current); // Add current node to closed list
+        closedList.push(current); // Add current node to closed list
 
-                // If we reached the target, end
-                if (current.x === targetNode.x && current.y === targetNode.y) {
-                    drawPath(current);
-                    return;
-                }
-
-                const neighbors = getNeighbors(current);
-                for (const neighbor of neighbors) {
-                    if (!closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
-                        // Check if it's already in openList
-                        const existingNode = openList.find(node => node.x === neighbor.x && node.y === neighbor.y);
-                        const newG = current.g + 1;
-
-                        if (!existingNode || newG < neighbor.g) {
-                            neighbor.g = newG;
-                            neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
-                            neighbor.parent = current; // Set current as parent
-                            if (!existingNode) {
-                                openList.push(neighbor); // Add neighbor to open list if not present
-                            }
-                        }
-                    }
-                }
-            }
+        // If we reached the target node, construct the path
+        if (current.x === targetNode.x && current.y === targetNode.y) {
+            drawPath(current);
+            return; // Exit once the path is drawn
         }
+
+        // Get neighbors for the current node
+        var neighbors = getNeighbors(current);
+        for (var i = 0; i < neighbors.length; i++) {
+            var neighbor = neighbors[i];
+
+            if (closedList.find(function(node) {
+                return node.x === neighbor.x && node.y === neighbor.y;
+            })) {
+                continue; // Ignore the neighbor that is already evaluated
+            }
+
+            // Cost from start to neighbor
+            var tentative_g = current.g + 1;
+
+            // Check if it's not in the open list or if the new g cost is lower
+            if (!openList.find(function(node) {
+                return node.x === neighbor.x && node.y === neighbor.y;
+            })) {
+                openList.push(neighbor); // Add neighbor to open list
+            } else if (tentative_g >= neighbor.g) {
+                continue; // This is not a better path
+            }
+
+            // This path is the best until now. Record it!
+            neighbor.g = tentative_g;
+            neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
+            neighbor.parent = current; // Keep track of the path
+        }
+    }
+}
+
 
         function heuristic(node, target) {
             return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
         }
 
-        // function getNeighbors(node) {
-        //     const directions = [
-        //         { x: 0, y: -1 }, { x: 1, y: 0 },
-        //         { x: 0, y: 1 }, { x: -1, y: 0 }
-        //     ];
-        //     const neighbors = [];
+        function getNeighbors(node) {
+    var directions = [
+        { x: 0, y: -1 }, // Up
+        { x: 1, y: 0 },  // Right
+        { x: 0, y: 1 },  // Down
+        { x: -1, y: 0 }  // Left
+    ];
+    var neighbors = [];
 
-        //     for (const dir of directions) {
-        //         const x = node.x + dir.x;
-        //         const y = node.y + dir.y;
-        //         const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-        //         if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
-        //             neighbors.push({ x, y, g: Infinity, f: Infinity, parent: null });
-        //         }
-        //     }
-        //     return neighbors;
-        // }
+    for (var i = 0; i < directions.length; i++) {
+        var dir = directions[i];
+        var x = node.x + dir.x;
+        var y = node.y + dir.y;
 
-        function drawPath(current) {
-            while (current) {
-                if (!(current.x === startNode.x && current.y === startNode.y) && !(current.x === targetNode.x && current.y === targetNode.y)) {
-                    setCell(current.x, current.y, 'path');
-                }
-                current = current.parent; // Move to the parent
+        if (x >= 0 && x < cols && y >= 0 && y < rows) {
+            var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+            if (cell && !cell.classList.contains('obstacle')) {
+                neighbors.push({ x: x, y: y, g: Infinity, f: Infinity, parent: null });
             }
         }
+    }
+    return neighbors; // Return the array of neighbor nodes
+}
+
+function drawPath(current) {
+    var pathNode = current;
+    while (pathNode) {
+        if (pathNode !== startNode && pathNode !== targetNode) { // Exclude start and end nodes
+            setCell(pathNode.x, pathNode.y, 'path'); // Set path class
+        }
+        pathNode = pathNode.parent; // Move to the parent node
+    }
+}
 
         function resetMaze() {
             generateGrid(); // Regenerate grid
