@@ -1,76 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maze Solver</title>
-<style>
-  body { display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif; }
-  #maze { display: grid; grid-template-columns: repeat(10, 30px); gap: 2px; }
-  .cell { width: 30px; height: 30px; background-color: #ddd; border: 1px solid #bbb; }
-  .start { background-color: #4CAF50; }
-  .target { background-color: #FF5733; }
-  .obstacle { background-color: #000; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Solver</title>
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif; }
+        #maze { display: grid; grid-template-columns: repeat(10, 30px); gap: 2px; }
+        .cell { width: 10px; height: 10px; background-color: #ddd; border: 1px solid #bbb; }
+        .start { background-color: #4CAF50; }
+        .target { background-color: #FF5733; }
+        .obstacle { background-color: #000; }
+        .path { background-color: #00BCD4; }
+    </style>
 </head>
 <body>
-<h2>Maze Solver AI</h2>
-<div id="maze"></div>
-<button onclick="startMaze()">Start</button>
-<button onclick="resetMaze()">Reset</button>
+    <h2>Maze Solver AI</h2>
+    <div id="maze"></div>
+    <button onclick="startMaze()">Start</button>
+    <button onclick="resetMaze()">Reset</button>
 
-<script>
-var rows = 10, cols = 10;
-var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
-var maze = document.getElementById('maze');
+    <script>
+        var rows = 10, cols = 10;
+        var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
+        var openList = [], closedList = [];
+        var maze = document.getElementById('maze');
 
-// Generate maze grid
-function generateGrid() {
-  maze.innerHTML = ''; // Clear existing maze
-  for (var y = 0; y < rows; y++) {
-    for (var x = 0; x < cols; x++) {
-      var cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.dataset.x = x;
-      cell.dataset.y = y;
-      cell.onclick = toggleCell; // Assign click handler
-      maze.appendChild(cell);
-    }
-  }
-  setCell(startNode.x, startNode.y, 'start');
-  setCell(targetNode.x, targetNode.y, 'target');
-}
+        // Generate maze grid
+        function generateGrid() {
+            maze.innerHTML = ''; // Clear existing maze
+            for (var y = 0; y < rows; y++) {
+                for (var x = 0; x < cols; x++) {
+                    var cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.onclick = toggleCell; // Assign click handler
+                    maze.appendChild(cell);
+                }
+            }
+            setCell(startNode.x, startNode.y, 'start');
+            setCell(targetNode.x, targetNode.y, 'target');
+        }
 
-function setCell(x, y, type) {
-  var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-  if (cell) {
-    cell.className = 'cell'; // Reset to base class
-    cell.classList.add(type);
-  }
-}
+        function setCell(x, y, type) {
+            var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+            if (cell) {
+                cell.className = 'cell'; // Reset to base class
+                cell.classList.add(type);
+            }
+        }
 
-function toggleCell(event) {
-  var cell = event.target;
-  var x = parseInt(cell.dataset.x);
-  var y = parseInt(cell.dataset.y);
+        function toggleCell(event) {
+            var cell = event.target;
+            var x = parseInt(cell.dataset.x);
+            var y = parseInt(cell.dataset.y);
 
-  // Prevent toggling start or target cells
-  if ((x === startNode.x && y === startNode.y) || (x === targetNode.x && y === targetNode.y)) return;
+            // Prevent toggling start or target cells
+            if ((x === startNode.x && y === startNode.y) || (x === targetNode.x && y === targetNode.y)) return;
 
-  cell.classList.toggle('obstacle'); // Toggle obstacle class
-}
+            cell.classList.toggle('obstacle'); // Toggle obstacle class
+        }
 
-function startMaze() {
-  alert("Start button clicked!"); // Test if the button works
-}
+        // A* Algorithm logic
+        function startMaze() {
+            openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode) }];
+            closedList = [];
+            while (openList.length > 0) {
+                const current = openList.pop();
+                closedList.push(current);
+                if (current.x === targetNode.x && current.y === targetNode.y) {
+                    drawPath();
+                    return;
+                }
 
-function resetMaze() {
-  alert("Reset button clicked!"); // Test if the button works
-  generateGrid(); // Regenerate grid
-}
+                const neighbors = getNeighbors(current);
+                for (const neighbor of neighbors) {
+                    if (!closedList.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        neighbor.g = current.g + 1;
+                        neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
+                        if (!openList.some(node => node.x === neighbor.x && node.y === neighbor.y && node.f <= neighbor.f)) {
+                            openList.push(neighbor);
+                        }
+                    }
+                }
+                openList.sort((a, b) => b.f - a.f); // Sort openList by f value
+            }
+        }
 
-// Initialize maze
-generateGrid();
-</script>
+        function heuristic(node, target) {
+            return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
+        }
+
+        function getNeighbors(node) {
+            const directions = [
+                { x: 0, y: -1 }, { x: 1, y: 0 },
+                { x: 0, y: 1 }, { x: -1, y: 0 }
+            ];
+            const neighbors = [];
+            for (const dir of directions) {
+                const x = node.x + dir.x;
+                const y = node.y + dir.y;
+                const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+                if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
+                    neighbors.push({ x, y });
+                }
+            }
+            return neighbors;
+        }
+
+        function drawPath() {
+            closedList.forEach(node => setCell(node.x, node.y, 'path'));
+        }
+
+        function resetMaze() {
+            openList = [];
+            closedList = [];
+            generateGrid(); // Regenerate grid
+        }
+
+        // Initialize maze
+        generateGrid();
+    </script>
 </body>
 </html>
