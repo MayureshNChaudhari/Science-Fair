@@ -1,76 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maze Solver</title>
-<style>
-  body { display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif; }
-  #maze { display: grid; grid-template-columns: repeat(10, 5px); gap: 2px; }
-  .cell { width: 5px; height: 5px; background-color: #ddd; border: 1px solid #bbb; }
-  .start { background-color: #4CAF50; }
-  .target { background-color: #FF5733; }
-  .obstacle { background-color: #000; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Solver</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px; /* Add some padding */
+            background-color: #f5f5f5; /* Light background for better visibility */
+        }
+        #maze {
+            display: flex;
+            flex-wrap: wrap; /* Allow cells to wrap onto new lines */
+            width: 51px; /* Set width to fit 10 cells of 10px with gaps */
+            margin-bottom: 20px; /* Space between maze and buttons */
+        }
+        .cell {
+            width: 5px;
+            height: 5px;
+            background-color: #ddd;
+            border: 1px solid #bbb;
+            box-sizing: border-box; /* Include border in width and height */
+        }
+        .start {
+            background-color: #4CAF50;
+        }
+        .target {
+            background-color: #FF5733;
+        }
+        .obstacle {
+            background-color: #000;
+        }
+    </style>
 </head>
 <body>
-<h2>Maze Solver AI</h2>
-<div id="maze"></div>
-<button onclick="startMaze()">Start</button>
-<button onclick="resetMaze()">Reset</button>
+    <h2>Maze Solver AI</h2>
+    <div id="maze"></div>
+    <button onclick="startMaze()">Start</button>
+    <button onclick="resetMaze()">Reset</button>
 
-<script>
-var rows = 10, cols = 10;
-var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
-var maze = document.getElementById('maze');
+    <script>
+        var rows = 10, cols = 10;
+        var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
+        var maze = document.getElementById('maze');
 
-// Generate maze grid
-function generateGrid() {
-  maze.innerHTML = ''; // Clear existing maze
-  for (var y = 0; y < rows; y++) {
-    for (var x = 0; x < cols; x++) {
-      var cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.dataset.x = x;
-      cell.dataset.y = y;
-      cell.onclick = toggleCell; // Assign click handler
-      maze.appendChild(cell);
-    }
-  }
-  setCell(startNode.x, startNode.y, 'start');
-  setCell(targetNode.x, targetNode.y, 'target');
-}
+        // Generate maze grid
+        function generateGrid() {
+            maze.innerHTML = ''; // Clear existing maze
+            for (var y = 0; y < rows; y++) {
+                for (var x = 0; x < cols; x++) {
+                    var cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.onclick = toggleCell; // Assign click handler
+                    maze.appendChild(cell);
+                }
+            }
+            setCell(startNode.x, startNode.y, 'start');
+            setCell(targetNode.x, targetNode.y, 'target');
+        }
 
-function setCell(x, y, type) {
-  var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-  if (cell) {
-    cell.className = 'cell'; // Reset to base class
-    cell.classList.add(type);
-  }
-}
+        function setCell(x, y, type) {
+            var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+            if (cell) {
+                cell.className = 'cell'; // Reset to base class
+                cell.classList.add(type);
+            }
+        }
 
-function toggleCell(event) {
-  var cell = event.target;
-  var x = parseInt(cell.dataset.x);
-  var y = parseInt(cell.dataset.y);
+        function toggleCell(event) {
+            var cell = event.target;
+            var x = parseInt(cell.dataset.x);
+            var y = parseInt(cell.dataset.y);
 
-  // Prevent toggling start or target cells
-  if ((x === startNode.x && y === startNode.y) || (x === targetNode.x && y === targetNode.y)) return;
+            // Prevent toggling start or target cells
+            if ((x === startNode.x && y === startNode.y) || (x === targetNode.x && y === targetNode.y)) return;
 
-  cell.classList.toggle('obstacle'); // Toggle obstacle class
-}
+            cell.classList.toggle('obstacle'); // Toggle obstacle class
+        }
 
-function startMaze() {
-  alert("Start button clicked!"); // Test if the button works
-}
+        function startMaze() {
+            alert("Start button clicked!"); // Test if the button works
+        }
 
-function resetMaze() {
-  alert("Reset button clicked!"); // Test if the button works
-  generateGrid(); // Regenerate grid
-}
+        function resetMaze() {
+            alert("Reset button clicked!"); // Test if the button works
+            generateGrid(); // Regenerate grid
+        }
 
-// Initialize maze
-generateGrid();
-</script>
+        // Initialize maze
+        generateGrid();
+    </script>
 </body>
 </html>
