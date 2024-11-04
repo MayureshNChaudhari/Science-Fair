@@ -1,18 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Solver AI</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maze Solver</title>
+<style>
+  body { display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif; }
+  #maze { display: grid; grid-template-columns: repeat(10, 30px); gap: 2px; }
+  .cell { width: 30px; height: 30px; background-color: #ddd; border: 1px solid #bbb; }
+  .start { background-color: #4CAF50; }
+  .target { background-color: #FF5733; }
+  .obstacle { background-color: #000; }
+</style>
 </head>
 <body>
-    <h1 class="lilita-one-regular">Maze Solver AI</h1>
-    <div id="mazeContainer"></div>
-    <button class="quintessential-regular" onclick="startPathfinding()">Start Solving</button>
-    <script src="script.js"></script>
+<h2>Maze Solver AI</h2>
+<div id="maze"></div>
+<button onclick="startMaze()">Start</button>
+<button onclick="resetMaze()">Reset</button>
+
+<script>
+var rows = 10, cols = 10;
+var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
+var maze = document.getElementById('maze');
+
+// Generate maze grid
+function generateGrid() {
+  maze.innerHTML = ''; // Clear existing maze
+  for (var y = 0; y < rows; y++) {
+    for (var x = 0; x < cols; x++) {
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.x = x;
+      cell.dataset.y = y;
+      cell.onclick = toggleCell; // Assign click handler
+      maze.appendChild(cell);
+    }
+  }
+  setCell(startNode.x, startNode.y, 'start');
+  setCell(targetNode.x, targetNode.y, 'target');
+}
+
+function setCell(x, y, type) {
+  var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+  if (cell) {
+    cell.className = 'cell'; // Reset to base class
+    cell.classList.add(type);
+  }
+}
+
+function toggleCell(event) {
+  var cell = event.target;
+  var x = parseInt(cell.dataset.x);
+  var y = parseInt(cell.dataset.y);
+
+  // Prevent toggling start or target cells
+  if ((x === startNode.x && y === startNode.y) || (x === targetNode.x && y === targetNode.y)) return;
+
+  cell.classList.toggle('obstacle'); // Toggle obstacle class
+}
+
+function startMaze() {
+  alert("Start button clicked!"); // Test if the button works
+}
+
+function resetMaze() {
+  alert("Reset button clicked!"); // Test if the button works
+  generateGrid(); // Regenerate grid
+}
+
+// Initialize maze
+generateGrid();
+</script>
 </body>
 </html>
