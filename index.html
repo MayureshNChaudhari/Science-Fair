@@ -130,9 +130,9 @@
         //     }
         // }
 
-        // function heuristic(node, target) {
-        //     return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
-        // }
+        function heuristic(node, target) {
+            return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
+        }
 
         // function getNeighbors(node) {
         //     const directions = [
@@ -152,20 +152,20 @@
         //     return neighbors;
         // }
 
-        // function drawPath(current) {
-        //     while (current) {
-        //         if (!(current.x === startNode.x && current.y === startNode.y) && !(current.x === targetNode.x && current.y === targetNode.y)) {
-        //             setCell(current.x, current.y, 'path');
-        //         }
-        //         current = current.parent; // Move to the parent
-        //     }
-        // }
+        function drawPath(current) {
+            while (current) {
+                if (!(current.x === startNode.x && current.y === startNode.y) && !(current.x === targetNode.x && current.y === targetNode.y)) {
+                    setCell(current.x, current.y, 'path');
+                }
+                current = current.parent; // Move to the parent
+            }
+        }
 
-        // function resetMaze() {
-        //     generateGrid(); // Regenerate grid
-        //     openList = [];
-        //     closedList = [];
-        // }
+        function resetMaze() {
+            generateGrid(); // Regenerate grid
+            openList = [];
+            closedList = [];
+        }
 
         // Initialize maze
         generateGrid();
