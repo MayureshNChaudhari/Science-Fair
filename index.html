@@ -134,23 +134,23 @@
             return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
         }
 
-        // function getNeighbors(node) {
-        //     const directions = [
-        //         { x: 0, y: -1 }, { x: 1, y: 0 },
-        //         { x: 0, y: 1 }, { x: -1, y: 0 }
-        //     ];
-        //     const neighbors = [];
+        function getNeighbors(node) {
+            const directions = [
+                { x: 0, y: -1 }, { x: 1, y: 0 },
+                { x: 0, y: 1 }, { x: -1, y: 0 }
+            ];
+            const neighbors = [];
 
-        //     for (const dir of directions) {
-        //         const x = node.x + dir.x;
-        //         const y = node.y + dir.y;
-        //         const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-        //         if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
-        //             neighbors.push({ x, y, g: Infinity, f: Infinity, parent: null });
-        //         }
-        //     }
-        //     return neighbors;
-        // }
+            for (const dir of directions) {
+                const x = node.x + dir.x;
+                const y = node.y + dir.y;
+                const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+                if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
+                    neighbors.push({ x, y, g: Infinity, f: Infinity, parent: null });
+                }
+            }
+            return neighbors;
+        }
 
         function drawPath(current) {
             while (current) {
