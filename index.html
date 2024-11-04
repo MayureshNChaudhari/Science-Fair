@@ -52,6 +52,9 @@
         var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
         var maze = document.getElementById('maze');
 
+        
+        // Initialize maze
+        generateGrid();
         // Generate maze grid
         function generateGrid() {
             maze.innerHTML = ''; // Clear existing maze
@@ -171,9 +174,6 @@
             setCell(startNode.x, startNode.y, 'start');
             setCell(targetNode.x, targetNode.y, 'target');
         }
-
-        // Initialize maze
-        generateGrid();
     </script>
 </body>
 </html>
