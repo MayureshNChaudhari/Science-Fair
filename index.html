@@ -53,6 +53,7 @@
         var maze = document.getElementById('maze');
 
         // Generate maze grid
+                generateGrid();
         function generateGrid() {
             maze.innerHTML = ''; // Clear existing maze
             for (var y = 0; y < rows; y++) {
@@ -88,77 +89,77 @@
             cell.classList.toggle('obstacle'); // Toggle obstacle class
         }
 
-        // function heuristic(node, target) {
-        //     return Math.abs(node.x - target.x) + Math.abs(node.y - target.y); // Manhattan distance
-        // }
+        function heuristic(node, target) {
+            return Math.abs(node.x - target.x) + Math.abs(node.y - target.y); // Manhattan distance
+        }
 
-        // function getNeighbors(node) {
-        //     const directions = [
-        //         { x: 0, y: -1 }, // Up
-        //         { x: 1, y: 0 },  // Right
-        //         { x: 0, y: 1 },  // Down
-        //         { x: -1, y: 0 }  // Left
-        //     ];
-        //     const neighbors = [];
+        function getNeighbors(node) {
+            const directions = [
+                { x: 0, y: -1 }, // Up
+                { x: 1, y: 0 },  // Right
+                { x: 0, y: 1 },  // Down
+                { x: -1, y: 0 }  // Left
+            ];
+            const neighbors = [];
 
-        //     for (const dir of directions) {
-        //         const x = node.x + dir.x;
-        //         const y = node.y + dir.y;
-        //         const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
-        //         if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
-        //             neighbors.push({ x, y });
-        //         }
-        //     }
-        //     return neighbors;
-        // }
+            for (const dir of directions) {
+                const x = node.x + dir.x;
+                const y = node.y + dir.y;
+                const cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+                if (x >= 0 && x < cols && y >= 0 && y < rows && cell && !cell.classList.contains('obstacle')) {
+                    neighbors.push({ x, y });
+                }
+            }
+            return neighbors;
+        }
 
-        // function reconstructPath(current) {
-        //     while (current) {
-        //         setCell(current.x, current.y, 'path'); // Mark the path
-        //         current = current.parent;
-        //     }
-        // }
+        function reconstructPath(current) {
+            while (current) {
+                setCell(current.x, current.y, 'path'); // Mark the path
+                current = current.parent;
+            }
+        }
 
-        // function aStar() {
-        //     let openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode), parent: null }];
-        //     let closedList = [];
+        function aStar() {
+            let openList = [{ ...startNode, g: 0, f: heuristic(startNode, targetNode), parent: null }];
+            let closedList = [];
 
-        //     while (openList.length > 0) {
-        //         // Sort open list to find the node with the lowest f score
-        //         openList.sort((a, b) => a.f - b.f);
-        //         const current = openList.shift(); // Get node with the lowest f score
+            while (openList.length > 0) {
+                // Sort open list to find the node with the lowest f score
+                openList.sort((a, b) => a.f - b.f);
+                const current = openList.shift(); // Get node with the lowest f score
 
-        //         // If we reached the target, end
-        //         if (current.x === targetNode.x && current.y === targetNode.y) {
-        //             reconstructPath(current);
-        //             return;
-        //         }
+                // If we reached the target, end
+                if (current.x === targetNode.x && current.y === targetNode.y) {
+                    reconstructPath(current);
+                    return;
+                }
 
-        //         closedList.push(current);
+                closedList.push(current);
 
-        //         // Get neighbors and calculate scores
-        //         const neighbors = getNeighbors(current);
-        //         for (const neighbor of neighbors) {
-        //             if (closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
-        //                 continue; // Ignore already evaluated neighbors
-        //             }
+                // Get neighbors and calculate scores
+                const neighbors = getNeighbors(current);
+                for (const neighbor of neighbors) {
+                    if (closedList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                        continue; // Ignore already evaluated neighbors
+                    }
 
-        //             const gScore = current.g + 1; // Cost from start to neighbor
-        //             const gScoreIsBest = !openList.find(node => node.x === neighbor.x && node.y === neighbor.y) || (gScore < neighbor.g);
-        //             if (gScoreIsBest) {
-        //                 neighbor.g = gScore;
-        //                 neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
-        //                 neighbor.parent = current; // Track the parent node
+                    const gScore = current.g + 1; // Cost from start to neighbor
+                    const gScoreIsBest = !openList.find(node => node.x === neighbor.x && node.y === neighbor.y) || (gScore < neighbor.g);
+                    if (gScoreIsBest) {
+                        neighbor.g = gScore;
+                        neighbor.f = neighbor.g + heuristic(neighbor, targetNode);
+                        neighbor.parent = current; // Track the parent node
 
-        //                 // Add neighbor to open list if not already present
-        //                 if (!openList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
-        //                     openList.push(neighbor);
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     alert("No path found!"); // Alert if no path is found
-        // }
+                        // Add neighbor to open list if not already present
+                        if (!openList.find(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                            openList.push(neighbor);
+                        }
+                    }
+                }
+            }
+            alert("No path found!"); // Alert if no path is found
+        }
 
         // function startMaze() {
         //     // Reset path before starting a new calculation
@@ -173,7 +174,6 @@
         // }
 
         // Initialize maze
-        generateGrid();
     </script>
 </body>
 </html>
