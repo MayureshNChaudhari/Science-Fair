@@ -160,17 +160,17 @@
         //     alert("No path found!"); // Alert if no path is found
         // }
 
-        function startMaze() {
-            // Reset path before starting a new calculation
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.classList.remove('path'); // Remove path class
-            });
-            aStar(); // Start the pathfinding process
-        }
+        // function startMaze() {
+        //     // Reset path before starting a new calculation
+        //     document.querySelectorAll('.cell').forEach(cell => {
+        //         cell.classList.remove('path'); // Remove path class
+        //     });
+        //     aStar(); // Start the pathfinding process
+        // }
 
-        function resetMaze() {
-            generateGrid(); // Regenerate grid and reset obstacles
-        }
+        // function resetMaze() {
+        //     generateGrid(); // Regenerate grid and reset obstacles
+        // }
 
         // Initialize maze
         generateGrid();
