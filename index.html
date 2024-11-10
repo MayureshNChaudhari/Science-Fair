@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Solver</title>
+    <title>Path Finding AI</title>
     <style>
         body {
             display: flex;
@@ -17,14 +17,14 @@
         #maze {
             display: flex;
             flex-wrap: wrap;
-            width: 306px; /* Adjusted to fit 10 cells of 10px with gaps */
+            width: 357px; /* Adjusted to fit 10 cells of 10px with gaps */
             margin-bottom: 20px;
         }
         .cell {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             background-color: #ddd;
-            border: 2px solid #bbb;
+            border: 3px solid #bbb;
             box-sizing: border-box;
         }
         .start {
@@ -52,17 +52,31 @@
     font-size: 20px;
     font-style: normal;
 }
+    .silkscreen-regular {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.silkscreen-bold {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 700;
+  font-size: 70px;
+  font-style: normal;
+}
+
     </style>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Quintessential&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1 class="lilita-one-regular">Maze Solver AI</h1>
+    <h1 class="silkscreen-bold">Path Finder AI</h1>
     <div id="maze"></div>
+    <div>
     <button class="quintessential-regular" id="startBtn">Start</button>
     <button class="quintessential-regular" id="resetBtn">Reset</button>
-
+</div>
     <script>
         var rows = 10, cols = 10;
         var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
@@ -192,14 +206,33 @@
 }
 
 function drawPath(current) {
+    var path = [];
     var pathNode = current;
+
+    // Collect the path nodes in reverse order
     while (pathNode) {
-        if (pathNode !== startNode && pathNode !== targetNode) { // Exclude start and end nodes
-            setCell(pathNode.x, pathNode.y, 'path'); // Set path class
+        if (pathNode !== startNode) { // Exclude only the start node
+            path.push(pathNode);
         }
         pathNode = pathNode.parent; // Move to the parent node
     }
+
+    // Display each block of the path one by one
+    path.reverse(); // Reverse the path to show it from start to end
+
+    path.forEach(function(node, index) {
+        setTimeout(function() {
+            // Ensure the target node remains red
+            if (node.x === targetNode.x && node.y === targetNode.y) {
+                setCell(node.x, node.y, 'target');
+            } else {
+                setCell(node.x, node.y, 'path'); // Set path class
+            }
+        }, index * 300); // Delay of 1 second for each block
+    });
 }
+
+
 
         function resetMaze() {
             generateGrid(); // Regenerate grid
