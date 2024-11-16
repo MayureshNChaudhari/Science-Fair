@@ -75,11 +75,16 @@
     <div id="maze"></div>
     <div>
     <button class="quintessential-regular" id="startBtn">Start</button>
-    <button class="quintessential-regular" id="resetBtn">Reset</button>
+</div>
+<div>
+<p class="quintessential-regular" id="Moves">Total Moves=</p>
+<p class="quintessential-regular"><b>G:</b>Cost to Move From Starting Node</p>
+<p class="quintessential-regular"><b>H:</b>Estimated Cost to Move To Final Node</p>
+<p class="quintessential-regular"><b>F:</b>Total Cost i.e G+H</p>
 </div>
     <script>
         var rows = 10, cols = 10;
-        var startNode = { x: 0, y: 0 }, targetNode = { x: 9, y: 9 };
+        var startNode = { x: 20, y: 20 }, targetNode = { x: 30, y: 30 };
         var maze = document.getElementById('maze');
         var openList = [], closedList = [];
 
@@ -205,10 +210,10 @@
     return neighbors; // Return the array of neighbor nodes
 }
 
+var count=1;    
 function drawPath(current) {
     var path = [];
     var pathNode = current;
-
     // Collect the path nodes in reverse order
     while (pathNode) {
         if (pathNode !== startNode) { // Exclude only the start node
@@ -219,16 +224,20 @@ function drawPath(current) {
 
     // Display each block of the path one by one
     path.reverse(); // Reverse the path to show it from start to end
-
+    count--;
     path.forEach(function(node, index) {
+    
         setTimeout(function() {
+            count++;
             // Ensure the target node remains red
             if (node.x === targetNode.x && node.y === targetNode.y) {
                 setCell(node.x, node.y, 'target');
             } else {
                 setCell(node.x, node.y, 'path'); // Set path class
+    Move=document.getElementById("Moves");
+Move.innerHTML="Total Moves="+count;
             }
-        }, index * 300); // Delay of 1 second for each block
+        }, index * 400); // Delay of 1 second for each block
     });
 }
 
@@ -245,7 +254,44 @@ function drawPath(current) {
 
         // Attach event listeners to buttons
         document.getElementById('startBtn').addEventListener('click', startMaze);
-        document.getElementById('resetBtn').addEventListener('click', resetMaze);
+
+        function toggleCell(event) {
+    var cell = event.target;
+    var x = parseInt(cell.dataset.x);
+    var y = parseInt(cell.dataset.y);
+
+    // Set the start node if not already set
+    if (startNode.x === 20 && startNode.y === 20 && (x !== targetNode.x || y !== targetNode.y)) {
+        clearCell(startNode.x, startNode.y); // Clear current start node if necessary
+        startNode = { x, y }; // Update start node position
+        setCell(x, y, 'start');
+        return;
+    }
+
+    // Set the target node if not already set and different from start node
+    if ((targetNode.x === 30 && targetNode.y === 30) && (x !== startNode.x || y !== startNode.y)) {
+        clearCell(targetNode.x, targetNode.y); // Clear current target node if necessary
+        targetNode = { x, y }; // Update target node position
+        setCell(x, y, 'target');
+        return;
+    }
+
+    // Prevent toggling start or target cells
+    if ((x === startNode.x && y === startNode.y) || (x === targetNode.x && y === targetNode.y)) return;
+
+    // Toggle obstacles for other clicks
+    cell.classList.toggle('obstacle');
+}
+
+function clearCell(x, y) {
+    var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+    if (cell) {
+        cell.className = 'cell'; // Reset to base class
+    }
+}
+
+// Rest of the code remains unchanged
+
     </script>
 </body>
 </html>
