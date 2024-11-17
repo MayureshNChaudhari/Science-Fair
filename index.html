@@ -188,10 +188,14 @@
 
         function getNeighbors(node) {
     var directions = [
-        { x: 0, y: -1 }, // Up
-        { x: 1, y: 0 },  // Right
-        { x: 0, y: 1 },  // Down
-        { x: -1, y: 0 }  // Left
+        { x: 0, y: -1 },  // Up
+        { x: 1, y: 0 },   // Right
+        { x: 0, y: 1 },   // Down
+        { x: -1, y: 0 },  // Left
+        { x: 1, y: -1 },  // Up-Right (Diagonal)
+        { x: 1, y: 1 },   // Down-Right (Diagonal)
+        { x: -1, y: 1 },  // Down-Left (Diagonal)
+        { x: -1, y: -1 }  // Up-Left (Diagonal)
     ];
     var neighbors = [];
 
@@ -200,15 +204,34 @@
         var x = node.x + dir.x;
         var y = node.y + dir.y;
 
+        // Check if the position is within bounds
         if (x >= 0 && x < cols && y >= 0 && y < rows) {
             var cell = maze.querySelector(`[data-x='${x}'][data-y='${y}']`);
+
+            // Check for obstacles
             if (cell && !cell.classList.contains('obstacle')) {
-                neighbors.push({ x: x, y: y, g: Infinity, f: Infinity, parent: null });
+                // Check for diagonal movement conditions
+                if (Math.abs(dir.x) === 1 && Math.abs(dir.y) === 1) {
+                    // Ensure both adjacent orthogonal cells are not obstacles
+                    var adjacent1 = maze.querySelector(`[data-x='${node.x + dir.x}'][data-y='${node.y}']`);
+                    var adjacent2 = maze.querySelector(`[data-x='${node.x}'][data-y='${node.y + dir.y}']`);
+
+                    if (adjacent1 && adjacent2 && 
+                        !adjacent1.classList.contains('obstacle') && 
+                        !adjacent2.classList.contains('obstacle')) {
+                        neighbors.push({ x: x, y: y, g: Infinity, f: Infinity, parent: null });
+                    }
+                } else {
+                    // Add orthogonal neighbors directly
+                    neighbors.push({ x: x, y: y, g: Infinity, f: Infinity, parent: null });
+                }
             }
         }
     }
-    return neighbors; // Return the array of neighbor nodes
+    return neighbors;
 }
+
+
 
 var count=1;    
 function drawPath(current) {
