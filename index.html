@@ -82,6 +82,10 @@
 <p class="quintessential-regular"><b>H:</b>Estimated Cost to Move To Final Node</p>
 <p class="quintessential-regular"><b>F:</b>Total Cost i.e G+H</p>
 </div>
+
+<div>
+    <button class="quintessential-regular" id="toggleDiagonalBtn">Toggle Diagonal Movement</button>
+</div>
     <script>
         var rows = 10, cols = 10;
         var startNode = { x: 20, y: 20 }, targetNode = { x: 30, y: 30 };
@@ -186,17 +190,32 @@
             return Math.abs(node.x - target.x) + Math.abs(node.y - target.y);
         }
 
-        function getNeighbors(node) {
+        var allowDiagonal = false; // Variable to track diagonal movement status
+
+// Event listener for the button to toggle diagonal movement
+document.getElementById('toggleDiagonalBtn').addEventListener('click', function() {
+    allowDiagonal = !allowDiagonal; // Toggle the state
+    this.textContent = allowDiagonal ? "Diagonal Movement: ON" : "Diagonal Movement: OFF"; // Update button text
+});
+
+function getNeighbors(node) {
     var directions = [
         { x: 0, y: -1 },  // Up
         { x: 1, y: 0 },   // Right
         { x: 0, y: 1 },   // Down
-        { x: -1, y: 0 },  // Left
-        { x: 1, y: -1 },  // Up-Right (Diagonal)
-        { x: 1, y: 1 },   // Down-Right (Diagonal)
-        { x: -1, y: 1 },  // Down-Left (Diagonal)
-        { x: -1, y: -1 }  // Up-Left (Diagonal)
+        { x: -1, y: 0 }   // Left
     ];
+
+    // Add diagonal directions if diagonal movement is allowed
+    if (allowDiagonal) {
+        directions.push(
+            { x: 1, y: -1 },  // Up-Right (Diagonal)
+            { x: 1, y: 1 },   // Down-Right (Diagonal)
+            { x: -1, y: 1 },  // Down-Left (Diagonal)
+            { x: -1, y: -1 }  // Up-Left (Diagonal)
+        );
+    }
+
     var neighbors = [];
 
     for (var i = 0; i < directions.length; i++) {
@@ -210,9 +229,8 @@
 
             // Check for obstacles
             if (cell && !cell.classList.contains('obstacle')) {
-                // Check for diagonal movement conditions
-                if (Math.abs(dir.x) === 1 && Math.abs(dir.y) === 1) {
-                    // Ensure both adjacent orthogonal cells are not obstacles
+                // If diagonal movement, check adjacent cells
+                if (allowDiagonal && Math.abs(dir.x) === 1 && Math.abs(dir.y) === 1) {
                     var adjacent1 = maze.querySelector(`[data-x='${node.x + dir.x}'][data-y='${node.y}']`);
                     var adjacent2 = maze.querySelector(`[data-x='${node.x}'][data-y='${node.y + dir.y}']`);
 
@@ -230,6 +248,7 @@
     }
     return neighbors;
 }
+
 
 
 
